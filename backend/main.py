@@ -517,7 +517,13 @@ async def ollama_generate(prompt: str) -> str:
     }
     print("OLLAMA_URL USED:", OLLAMA_URL)
     async with httpx.AsyncClient(timeout=120.0) as client:
-        r = await client.post(OLLAMA_URL, json=payload)
+        r = await client.post(
+            OLLAMA_URL,
+            json=payload,
+            headers={
+                "ngrok-skip-browser-warning": "true"
+            }
+        )
         if r.status_code >= 400:
             raise HTTPException(status_code=502, detail=f"Ollama error: {r.text}")
         data = r.json()
