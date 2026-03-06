@@ -351,9 +351,13 @@ def resolve_to_url(fsn_or_url: str) -> str:
         return value
     return PRODUCT_URL_TEMPLATE.format(pid=value)
 
-
 async def fetch_html_simple(url: str) -> str:
-    async with httpx.AsyncClient(headers=HEADERS, timeout=25.0, follow_redirects=True) as client:
+    async with httpx.AsyncClient(
+        headers=HEADERS,
+        timeout=25.0,
+        follow_redirects=True,
+        http2=True,
+    ) as client:
         r = await client.get(url)
         r.raise_for_status()
         return r.text
@@ -366,15 +370,35 @@ USER_DATA_DIR = os.path.join(os.getcwd(), "pw_profile")
 
 def fetch_html_playwright_sync(url: str) -> str:
     with sync_playwright() as p:
-        browser = p.chromium.launch_persistent_context(
-            USER_DATA_DIR,
-            headless=False,  # IMPORTANT for captcha
-            viewport={"width": 1280, "height": 720},
-            user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
+        browser = p.chromium.launch(
+            headless=True,
+            args=[
+                "--no-sandbox",
+                "--disable-dev-shm-usage",
+                "--disable-blink-features=AutomationControlled",
+            ],
         )
-        page = browser.new_page()
+
+        context = browser.new_context(
+            viewport={"width": 1280, "height": 720},
+            user_agent=HEADERS["User-Agent"],
+            locale="en-US",
+            extra_http_headers={
+                "Accept-Language": "en-US,en;q=0.9",
+                "Referer": "https://www.flipkart.com/",
+            },
+        )
+
+        page = context.new_page()
         page.goto(url, wait_until="domcontentloaded", timeout=60000)
+
+        try:
+            page.wait_for_load_state("networkidle", timeout=15000)
+        except Exception:
+            pass
+
         page.wait_for_timeout(3000)
+
         html = page.content()
         browser.close()
         return html
@@ -856,6 +880,12 @@ async def generate(req: GenerateRequest):
             status_code=403,
             detail="Flipkart blocked the request (captcha/denied). Open last_flipkart.html to confirm."
         )
+    # Save HTML for debugging
+    try:
+        with open("last_flipkart.html", "w", encoding="utf-8") as f:
+            f.write(html)
+    except Exception:
+        pass
 
     extracted = parse_flipkart(html)
 
