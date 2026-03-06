@@ -16,26 +16,8 @@ function clampInt(v, min, max) {
   return Math.max(min, Math.min(max, Math.floor(n)));
 }
 
-async function runWithConcurrency(tasks, limit = 3) {
-  const results = [];
-  let i = 0;
-  const workers = new Array(limit).fill(0).map(async () => {
-    while (i < tasks.length) {
-      const idx = i++;
-      results[idx] = await tasks[idx]();
-    }
-  });
-  await Promise.all(workers);
-  return results;
-}
 
-function Badge({ pass }) {
-  return (
-    <span className={`badge ${pass ? "pass" : "fail"}`}>
-      {pass ? "PASS" : "FAIL"}
-    </span>
-  );
-}
+
 
 const newItem = () => ({
   id: (crypto?.randomUUID?.() || String(Date.now() + Math.random())).replaceAll(".", ""),
@@ -222,20 +204,20 @@ const runAll = async () => {
 };
 
 
-  const summary = useMemo(() => {
-    return rows.map((idx) => {
-      const it = getItem(idx);
+const summary = useMemo(() => {
+  return rows.map((idx) => {
+    const it = items[idx] || newItem();
 
-      return {
-        idx: idx + 1,
-        fsn: it.fsn,
-        humanOverall: it.evaluation?.human?.overall ?? null,
-        humanPass: it.evaluation?.human?.pass ?? null,
-        aiOverall: it.evaluation?.ai?.overall ?? null,
-        aiPass: it.evaluation?.ai?.pass ?? null,
-      };
-    });
-  }, [items, rows.length]);
+    return {
+      idx: idx + 1,
+      fsn: it.fsn,
+      humanOverall: it.evaluation?.human?.overall ?? null,
+      humanPass: it.evaluation?.human?.pass ?? null,
+      aiOverall: it.evaluation?.ai?.overall ?? null,
+      aiPass: it.evaluation?.ai?.pass ?? null,
+    };
+  });
+}, [items, rows]);
 
   // -------- Excel Export: S.No, FSN, AI Feature, AI Description --------
  function parseAiPairs(aiText, maxPairs = 6) {
