@@ -20,9 +20,10 @@ EVAL_CACHE = {}
 # ----------------------------
 # Config
 # ----------------------------
-OLLAMA_URL = "http://localhost:11434/api/generate"
-OLLAMA_MODEL = "llama3.1:8b"
-
+# OLLAMA_URL = "http://localhost:11434/api/generate"
+# OLLAMA_MODEL = "llama3.1:8b"
+OLLAMA_URL = os.getenv("OLLAMA_URL", "http://localhost:11434/api/generate")
+OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "llama3.1:8b")
 # Your required template: PID/FSN is inserted into pid=
 #PRODUCT_URL_TEMPLATE = "https://www.flipkart.com/samsung-galaxy-s24-fe-5g-graphite-128-gb/p/itme960199e26f23?pid={pid}"
 PRODUCT_URL_TEMPLATE = (
