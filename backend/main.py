@@ -510,25 +510,50 @@ async def ollama_generate(prompt: str) -> str:
         "stream": False,
         "options": {
             "temperature": 0,
-            "top_p": 0.1, 
+            "top_p": 0.1,
             "seed": 42
-            
         },
     }
+
     print("OLLAMA_URL USED:", OLLAMA_URL)
+
     async with httpx.AsyncClient(timeout=120.0) as client:
         r = await client.post(
             OLLAMA_URL,
             json=payload,
             headers={
-                "ngrok-skip-browser-warning": "true"
-            }
+                "ngrok-skip-browser-warning": "true",
+                "Accept": "application/json",
+                "Content-Type": "application/json",
+            },
         )
-        if r.status_code >= 400:
-            raise HTTPException(status_code=502, detail=f"Ollama error: {r.text}")
-        data = r.json()
-        return (data.get("response") or "").strip()
 
+        print("OLLAMA STATUS:", r.status_code)
+        print("OLLAMA CONTENT-TYPE:", r.headers.get("content-type", ""))
+        print("OLLAMA RESPONSE PREVIEW:", r.text[:500])
+
+        if r.status_code >= 400:
+            raise HTTPException(
+                status_code=502,
+                detail=f"Ollama error: {r.status_code} - {r.text[:500]}"
+            )
+
+        ctype = (r.headers.get("content-type") or "").lower()
+        if "application/json" not in ctype:
+            raise HTTPException(
+                status_code=502,
+                detail=f"Ollama returned non-JSON response: {r.text[:500]}"
+            )
+
+        try:
+            data = r.json()
+        except Exception:
+            raise HTTPException(
+                status_code=502,
+                detail=f"Ollama JSON parse failed: {r.text[:500]}"
+            )
+
+        return (data.get("response") or "").strip()
 
 # ----------------------------
 # Feature count + tag parsing
