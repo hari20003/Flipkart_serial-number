@@ -515,6 +515,7 @@ async def ollama_generate(prompt: str) -> str:
             
         },
     }
+    print("OLLAMA_URL USED:", OLLAMA_URL)
     async with httpx.AsyncClient(timeout=120.0) as client:
         r = await client.post(OLLAMA_URL, json=payload)
         if r.status_code >= 400:
