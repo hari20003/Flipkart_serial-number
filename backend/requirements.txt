@@ -1,0 +1,10 @@
+fastapi
+uvicorn[standard]
+httpx
+beautifulsoup4
+playwright
+pandas
+openpyxl
+scikit-learn
+pydantic
+starlette
