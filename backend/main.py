@@ -99,12 +99,15 @@ print("PRODUCT_URL_TEMPLATE:", PRODUCT_URL_TEMPLATE)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://127.0.0.1:3000"],
+    allow_origins=[
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+        "https://nextwealthfsn.netlify.app",   # replace with your real Netlify URL
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
 
 class GenerateRequest(BaseModel):
     sop: str
