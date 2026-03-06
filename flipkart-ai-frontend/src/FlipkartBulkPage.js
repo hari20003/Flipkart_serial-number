@@ -41,7 +41,7 @@ export default function FlipkartBulkPage() {
 
   const [globalErr, setGlobalErr] = useState("");
   const [busy, setBusy] = useState(false);
-  const [error, setError] = useState("");
+  const [, setError] = useState("");
   const [items, setItems] = useState([newItem()]);
 
   const rows = useMemo(() => {
