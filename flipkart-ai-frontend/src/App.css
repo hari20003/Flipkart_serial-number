@@ -1,0 +1,255 @@
+.page {
+  min-height: 100vh;
+  background: radial-gradient(1200px 600px at 20% 10%, #1b1f3a 0%, transparent 60%),
+              radial-gradient(900px 500px at 85% 30%, #0b3a52 0%, transparent 55%),
+              linear-gradient(180deg, #070a12 0%, #070a12 100%);
+  color: #e9eefc;
+}
+
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 28px 16px 80px;
+}
+
+.headerRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+.pageTitle {
+  margin: 0;
+  font-size: 28px;
+  letter-spacing: 0.2px;
+}
+
+.subTitle {
+  margin-top: 6px;
+  color: rgba(233, 238, 252, 0.65);
+  font-size: 14px;
+}
+
+.rightPill {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  padding: 10px 14px;
+  border-radius: 999px;
+  font-size: 13px;
+  color: rgba(233, 238, 252, 0.9);
+  backdrop-filter: blur(8px);
+}
+
+.card {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  border-radius: 16px;
+  padding: 18px;
+  margin-top: 16px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+  backdrop-filter: blur(10px);
+}
+
+.cardTitle {
+  margin: 0 0 12px;
+  font-size: 18px;
+}
+
+.hint {
+  color: rgba(233, 238, 252, 0.65);
+  font-size: 13px;
+  margin-top: 6px;
+}
+
+.grid3 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 14px;
+}
+
+.field label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: rgba(233, 238, 252, 0.9);
+}
+
+input, textarea {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(0,0,0,0.35);
+  color: #e9eefc;
+  outline: none;
+}
+
+textarea {
+  resize: vertical;
+}
+
+.bigTextarea {
+  min-height: 180px;
+}
+
+.rowTextarea {
+  min-height: 90px;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 12px;
+  overflow: hidden;
+  border-radius: 12px;
+}
+
+.table th, .table td {
+  border-bottom: 1px solid rgba(255,255,255,0.10);
+  padding: 12px;
+  text-align: left;
+  vertical-align: top;
+}
+
+.table th {
+  color: rgba(233, 238, 252, 0.85);
+  font-weight: 700;
+  background: rgba(255,255,255,0.04);
+}
+
+.actions {
+  margin-top: 14px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.actionsRow {
+  margin-top: 14px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.btnPrimary {
+  padding: 12px 18px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.18);
+  background: linear-gradient(90deg, #7c3aed 0%, #3b82f6 100%);
+  color: white;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.btnPrimary:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.btnGhost {
+  padding: 12px 16px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.16);
+  background: rgba(255,255,255,0.06);
+  color: rgba(233,238,252,0.92);
+  cursor: pointer;
+}
+
+.badge {
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-weight: 800;
+  font-size: 12px;
+  display: inline-block;
+}
+
+.badge.pass {
+  background: rgba(34,197,94,0.20);
+  border: 1px solid rgba(34,197,94,0.35);
+  color: #86efac;
+}
+
+.badge.fail {
+  background: rgba(239,68,68,0.18);
+  border: 1px solid rgba(239,68,68,0.30);
+  color: #fca5a5;
+}
+
+.detailHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.btnSmall {
+  padding: 10px 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.16);
+  background: rgba(255,255,255,0.06);
+  color: rgba(233,238,252,0.92);
+  cursor: pointer;
+}
+
+.errorCard {
+  border-color: rgba(239,68,68,0.30);
+  background: rgba(239,68,68,0.10);
+}
+
+.errorInline {
+  margin-top: 10px;
+  padding: 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(239,68,68,0.28);
+  background: rgba(239,68,68,0.10);
+  color: #ffd1d1;
+}
+
+.twoCol {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-top: 12px;
+}
+
+.panel {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.10);
+  border-radius: 16px;
+  padding: 14px;
+}
+
+.panelTitle {
+  margin: 0 0 10px;
+  font-size: 16px;
+}
+
+.preBox {
+  margin: 0;
+  white-space: pre-wrap;
+  color: rgba(233,238,252,0.92);
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.jsonBox {
+  margin: 0;
+  background: #000;
+  border-radius: 14px;
+  padding: 14px;
+  color: #55ff66;
+  overflow: auto;
+  max-height: 520px;
+  font-size: 12.5px;
+  line-height: 1.5;
+  border: 1px solid rgba(255,255,255,0.10);
+}
+
+@media (max-width: 920px) {
+  .grid3 { grid-template-columns: 1fr; }
+  .twoCol { grid-template-columns: 1fr; }
+}
