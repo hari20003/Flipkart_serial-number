@@ -891,6 +891,147 @@ def normalize_words_keep_newlines(text: str, max_words: int = 300, min_words: in
     # optional: if you want to ensure minimum words, DO NOT pad here (better to enforce in prompt)
     return result
 
+def count_words_text(s: str) -> int:
+    return len(re.findall(r"\b\w+\b", s or ""))
+
+
+def de_repeat_sentences(pretty: str) -> str:
+    """
+    Removes obvious repeated sentences / repeated openers from each feature paragraph.
+    Keeps feature block formatting intact.
+    """
+    if not pretty:
+        return ""
+
+    blocks = [b.strip() for b in pretty.split("\n\n") if b.strip()]
+    cleaned_blocks = []
+
+    for block in blocks:
+        parts = block.split("\n", 1)
+        if len(parts) != 2:
+            cleaned_blocks.append(block)
+            continue
+
+        title, para = parts[0].strip(), parts[1].strip()
+
+        sentences = [s.strip() for s in re.split(r'(?<=[.!?])\s+', para) if s.strip()]
+        seen = set()
+        filtered = []
+
+        for s in sentences:
+            key = re.sub(r"[^a-z]+", "", s.lower())
+            if not key:
+                continue
+            if key in seen:
+                continue
+            seen.add(key)
+            filtered.append(s)
+
+        cleaned_para = " ".join(filtered).strip() if filtered else para
+        cleaned_blocks.append(f"{title}\n{cleaned_para}")
+
+    return "\n\n".join(cleaned_blocks).strip()
+
+
+def expand_to_min_words(pretty: str, min_words: int = 250) -> str:
+    """
+    Expands content gently until it reaches min_words.
+    Adds short generic non-repetitive filler to each paragraph.
+    """
+    if not pretty:
+        return ""
+
+    blocks = [b.strip() for b in pretty.split("\n\n") if b.strip()]
+    if not blocks:
+        return pretty
+
+    fillers = [
+        "This supports a smoother experience during everyday use.",
+        "It helps maintain ease and consistency during regular handling.",
+        "This adds practical value across common daily situations.",
+        "It contributes to dependable use throughout routine tasks.",
+        "This supports comfort, convenience and reliable everyday performance.",
+    ]
+
+    word_total = count_words_text(pretty)
+    filler_idx = 0
+
+    while word_total < min_words:
+        changed = False
+
+        for i, block in enumerate(blocks):
+            if word_total >= min_words:
+                break
+
+            parts = block.split("\n", 1)
+            if len(parts) != 2:
+                continue
+
+            title, para = parts[0].strip(), parts[1].strip()
+            sentence = fillers[filler_idx % len(fillers)]
+            filler_idx += 1
+
+            if sentence.lower() not in para.lower():
+                if para and not para.endswith("."):
+                    para += "."
+                para = f"{para} {sentence}".strip()
+                blocks[i] = f"{title}\n{para}"
+                changed = True
+                word_total = count_words_text("\n\n".join(blocks))
+
+        if not changed:
+            break
+
+    return "\n\n".join(blocks).strip()
+
+
+def trim_to_max_words(pretty: str, max_words: int = 300) -> str:
+    """
+    Trims from the end while preserving block/newline structure as much as possible.
+    """
+    if not pretty:
+        return ""
+
+    blocks = [b.strip() for b in pretty.split("\n\n") if b.strip()]
+    out_blocks = []
+    total = 0
+
+    for block in blocks:
+        parts = block.split("\n", 1)
+        if len(parts) != 2:
+            continue
+
+        title, para = parts[0].strip(), parts[1].strip()
+        title_words = re.findall(r"\b\w+\b", title)
+        para_words = re.findall(r"\S+", para)
+
+        block_count = len(title_words)
+
+        if total + block_count >= max_words:
+            break
+
+        remaining = max_words - total - block_count
+        if remaining <= 0:
+            break
+
+        if len(re.findall(r"\b\w+\b", para)) > remaining:
+            trimmed_para_tokens = []
+            para_word_count = 0
+            for tok in para_words:
+                if re.search(r"\w", tok):
+                    if para_word_count >= remaining:
+                        break
+                    para_word_count += 1
+                trimmed_para_tokens.append(tok)
+            para = " ".join(trimmed_para_tokens).strip()
+
+        out_blocks.append(f"{title}\n{para}".strip())
+        total = count_words_text("\n\n".join(out_blocks))
+
+        if total >= max_words:
+            break
+
+    return "\n\n".join(out_blocks).strip()
 
 
 
