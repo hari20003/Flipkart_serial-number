@@ -516,6 +516,8 @@ async def ollama_generate(prompt: str) -> str:
     }
 
     print("OLLAMA_URL USED:", OLLAMA_URL)
+    if "ngrok" in OLLAMA_URL and "localhost" not in OLLAMA_URL:
+        print("NOTE: Using ngrok tunnel for Ollama. 403 errors are usually tunnel-side, not app-side.")
 
     async with httpx.AsyncClient(timeout=120.0) as client:
         r = await client.post(
@@ -533,9 +535,17 @@ async def ollama_generate(prompt: str) -> str:
         print("OLLAMA RESPONSE PREVIEW:", r.text[:500])
 
         if r.status_code >= 400:
+            preview = (r.text or "")[:500]
+            if r.status_code == 403:
+                raise HTTPException(
+                    status_code=502,
+                    detail="Ollama tunnel rejected the request (403). "
+                        "If using Render + ngrok, the tunnel is the blocker. "
+                        "Run backend locally or switch to GPT for hosted use."
+                )
             raise HTTPException(
                 status_code=502,
-                detail=f"Ollama error: {r.status_code} - {r.text[:500]}"
+                detail=f"Ollama error: {r.status_code} - {preview}"
             )
 
         ctype = (r.headers.get("content-type") or "").lower()
