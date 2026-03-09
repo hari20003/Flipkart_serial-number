@@ -907,6 +907,12 @@ async def generate(req: GenerateRequest):
             f.write(html)
     except Exception:
         pass
+    
+    print("HTML PREVIEW START")
+    print((html or "")[:2000])
+    print("HTML PREVIEW END")
+    soup_dbg = BeautifulSoup(html or "", "html.parser")
+    print("PAGE TITLE:", soup_dbg.title.get_text(" ", strip=True) if soup_dbg.title else "NO TITLE")
 
     if looks_blocked(html):
         raise HTTPException(
